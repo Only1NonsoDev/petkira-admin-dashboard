@@ -1741,10 +1741,16 @@ function catBadge(c) {
 let allSentryBugs = [];
 
 async function loadSentryBugs() {
-  const { data, error } = await sbClient
-    .from('sentry_events')
-    .select('*')
-    .order('received_at', { ascending: false });
+  let data, error;
+  try {
+    const result = await Promise.race([
+      sbClient.from('sentry_events').select('*').order('received_at', { ascending: false }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out — check your Supabase config')), 8000))
+    ]);
+    ({ data, error } = result);
+  } catch (e) {
+    error = e;
+  }
 
   if (error) {
     document.getElementById('sentry-bugs-tbody').innerHTML =
