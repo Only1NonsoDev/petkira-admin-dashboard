@@ -1,0 +1,1855 @@
+<!-- Demo version — API keys replaced with placeholders. Built by Nonso Freetal (NonsoDev) as part of the PetKira AI admin dashboard. -->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PetKira Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ═══════════════════════════════════════════════════
+   PETKIRA BRAND TOKENS — Dark Theme (default)
+═══════════════════════════════════════════════════ */
+:root {
+  /* PetKira brand */
+  --pk-teal:        #0EA5A0;
+  --pk-teal-light:  #14C8C2;
+  --pk-teal-dark:   #0A7B77;
+  --pk-teal-glow:   rgba(14,165,160,0.18);
+  --pk-amber:       #F59E0B;
+  --pk-amber-glow:  rgba(245,158,11,0.18);
+  --pk-red:         #EF4444;
+  --pk-red-glow:    rgba(239,68,68,0.15);
+  --pk-green:       #22C55E;
+  --pk-green-glow:  rgba(34,197,94,0.15);
+  --pk-purple:      #8B5CF6;
+
+  /* Dark theme surfaces */
+  --bg:           #0B0F12;
+  --surface:      #141A1F;
+  --surface2:     #1C2429;
+  --surface3:     #232D34;
+  --border:       rgba(255,255,255,0.08);
+  --border2:      rgba(255,255,255,0.14);
+
+  /* Text */
+  --text-primary:   #F0F4F8;
+  --text-secondary: #8FA3B3;
+  --text-muted:     #5A7080;
+
+  /* Sidebar */
+  --sidebar-bg:     #0E1419;
+  --sidebar-w:      240px;
+
+  /* Shadow */
+  --shadow:   0 4px 24px rgba(0,0,0,0.4);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+
+  /* Radius */
+  --r: 10px;
+  --r-sm: 6px;
+  --r-lg: 14px;
+}
+
+[data-theme="light"] {
+  --bg:           #F0F4F8;
+  --surface:      #FFFFFF;
+  --surface2:     #F7FAFB;
+  --surface3:     #EDF2F5;
+  --border:       rgba(0,0,0,0.08);
+  --border2:      rgba(0,0,0,0.14);
+  --text-primary:   #0F1C24;
+  --text-secondary: #4A6478;
+  --text-muted:     #8FA3B3;
+  --sidebar-bg:     #0E1419;
+  --shadow:   0 4px 24px rgba(0,0,0,0.1);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-primary); font-size: 14px; line-height: 1.5; }
+a { color: var(--pk-teal); text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+input, textarea, select { font-family: inherit; background: var(--surface2); border: 1px solid var(--border); color: var(--text-primary); border-radius: var(--r-sm); padding: 8px 12px; font-size: 14px; width: 100%; transition: border-color 0.2s; }
+input:focus, textarea:focus, select:focus { border-color: var(--pk-teal); outline: none; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════ */
+#app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-mark {
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px; background: var(--pk-teal);
+  border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.logo-text { color: #F0F4F8; }
+.logo-text .brand { font-weight: 700; font-size: 16px; letter-spacing: -0.3px; }
+.logo-text .admin { font-size: 11px; color: var(--pk-teal); letter-spacing: 0.5px; font-weight: 500; }
+
+.sidebar-nav { flex: 1; padding: 12px 10px; }
+.nav-section-label {
+  font-size: 10px; font-weight: 600; color: var(--text-muted);
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 12px 10px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px; border-radius: var(--r-sm);
+  color: #8FA3B3; font-size: 13.5px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
+  user-select: none;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: #C8D8E4; }
+.nav-item.active { background: var(--pk-teal-glow); color: var(--pk-teal-light); }
+.nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-item .nav-badge {
+  margin-left: auto; background: var(--pk-red); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center;
+}
+
+.sidebar-footer {
+  padding: 16px 10px;
+  border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.theme-toggle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--r-sm);
+  color: #8FA3B3; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s;
+  background: transparent; width: 100; justify-content: flex-start;
+}
+.theme-toggle:hover { background: rgba(255,255,255,0.05); color: #C8D8E4; }
+.pk-version { font-size: 11px; color: var(--text-muted); padding: 0 12px; }
+
+/* MAIN */
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* TOPBAR */
+#topbar {
+  height: 58px; padding: 0 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar-title { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--pk-green-glow); border: 1px solid var(--pk-green);
+  color: var(--pk-green); font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: 20px;
+}
+.topbar-pill.warn { background: var(--pk-amber-glow); border-color: var(--pk-amber); color: var(--pk-amber); }
+.pulse { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* PAGE CONTENT */
+#content { flex: 1; overflow-y: auto; padding: 28px; }
+
+/* SECTION (page) */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════════════════════════
+   CARDS & STAT TILES
+═══════════════════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { border-color: var(--border2); box-shadow: var(--shadow-sm); }
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent-color, var(--pk-teal));
+}
+.stat-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 10px; }
+.stat-value { font-size: 32px; font-weight: 700; color: var(--text-primary); line-height: 1; margin-bottom: 6px; }
+.stat-sub { font-size: 12px; color: var(--text-muted); }
+.stat-icon { position: absolute; top: 18px; right: 18px; font-size: 22px; opacity: 0.25; }
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.card-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.card-body { padding: 20px; }
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; border: none; white-space: nowrap;
+}
+.btn-primary { background: var(--pk-teal); color: #fff; }
+.btn-primary:hover { background: var(--pk-teal-light); }
+.btn-amber { background: var(--pk-amber); color: #000; }
+.btn-amber:hover { background: #FBBF24; }
+.btn-ghost {
+  background: transparent; border: 1px solid var(--border2); color: var(--text-secondary);
+}
+.btn-ghost:hover { background: var(--surface2); color: var(--text-primary); }
+.btn-danger { background: var(--pk-red-glow); border: 1px solid var(--pk-red); color: var(--pk-red); }
+.btn-danger:hover { background: var(--pk-red); color: #fff; }
+.btn-success { background: var(--pk-green-glow); border: 1px solid var(--pk-green); color: var(--pk-green); }
+.btn-success:hover { background: var(--pk-green); color: #fff; }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+.btn-purple { background: var(--pk-purple); color: #fff; }
+.btn-purple:hover { opacity: 0.9; }
+
+/* ═══════════════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════════════ */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.6px; text-transform: uppercase; padding: 10px 14px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+td { padding: 13px 14px; border-bottom: 1px solid var(--border); color: var(--text-primary); font-size: 13.5px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(14,165,160,0.04); }
+
+/* ═══════════════════════════════════════════════════
+   BADGES & STATUS
+═══════════════════════════════════════════════════ */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  white-space: nowrap;
+}
+.badge-teal    { background: var(--pk-teal-glow); color: var(--pk-teal-light); border: 1px solid rgba(14,165,160,0.3); }
+.badge-amber   { background: var(--pk-amber-glow); color: var(--pk-amber); border: 1px solid rgba(245,158,11,0.3); }
+.badge-red     { background: var(--pk-red-glow); color: var(--pk-red); border: 1px solid rgba(239,68,68,0.3); }
+.badge-green   { background: var(--pk-green-glow); color: var(--pk-green); border: 1px solid rgba(34,197,94,0.3); }
+.badge-muted   { background: var(--surface3); color: var(--text-muted); border: 1px solid var(--border); }
+.badge-purple  { background: rgba(139,92,246,0.15); color: var(--pk-purple); border: 1px solid rgba(139,92,246,0.3); }
+
+/* STARS */
+.stars { color: var(--pk-amber); letter-spacing: -1px; font-size: 15px; }
+
+/* ═══════════════════════════════════════════════════
+   FOUNDING MEMBER PROGRESS
+═══════════════════════════════════════════════════ */
+.founding-progress {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px;
+  margin-bottom: 20px;
+}
+.founding-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.founding-bar-wrap { background: var(--surface3); border-radius: 6px; height: 10px; position: relative; overflow: hidden; }
+.founding-bar { height: 100%; background: linear-gradient(90deg, var(--pk-teal), var(--pk-teal-light)); border-radius: 6px; transition: width 0.6s ease; }
+.founding-counts { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+.founding-counts strong { color: var(--pk-teal); }
+
+/* ═══════════════════════════════════════════════════
+   SUPPORT INBOX
+═══════════════════════════════════════════════════ */
+.inbox-grid { display: grid; grid-template-columns: 320px 1fr; gap: 0; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; min-height: 500px; }
+.inbox-list { border-right: 1px solid var(--border); overflow-y: auto; background: var(--surface); max-height: 600px; }
+.inbox-item { padding: 14px 18px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+.inbox-item:hover { background: var(--surface2); }
+.inbox-item.active { background: var(--pk-teal-glow); border-left: 3px solid var(--pk-teal); }
+.inbox-item-from { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+.inbox-item-sub { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.inbox-item-time { font-size: 11px; color: var(--text-muted); float: right; }
+.inbox-item.unread .inbox-item-from { color: var(--pk-teal-light); }
+.inbox-detail { padding: 22px; background: var(--surface); display: flex; flex-direction: column; gap: 16px; }
+.email-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+.email-subject { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.email-meta { font-size: 12.5px; color: var(--text-secondary); }
+.email-body { font-size: 14px; line-height: 1.7; color: var(--text-primary); flex: 1; }
+.ai-reply-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; }
+.ai-reply-label { font-size: 11px; font-weight: 700; color: var(--pk-teal); letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.reply-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ═══════════════════════════════════════════════════
+   BUG TRACKER
+═══════════════════════════════════════════════════ */
+.bug-row { cursor: pointer; }
+.bug-expand { padding: 18px 20px; background: var(--surface2); border-bottom: 1px solid var(--border); display: none; }
+.bug-expand.show { display: block; }
+.bug-stack { background: var(--bg); border-radius: var(--r-sm); padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--pk-teal-light); max-height: 200px; overflow-y: auto; white-space: pre; margin: 10px 0; border: 1px solid var(--border); }
+.ai-diagnosis { background: var(--pk-teal-glow); border: 1px solid rgba(14,165,160,0.2); border-radius: var(--r-sm); padding: 14px; font-size: 13px; color: var(--text-primary); margin: 10px 0; }
+.ai-diagnosis-label { font-size: 11px; font-weight: 700; color: var(--pk-teal); letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+.send-claude-btn { background: var(--pk-amber); color: #000; font-weight: 700; border: none; padding: 10px 20px; border-radius: var(--r-sm); cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
+.send-claude-btn:hover { background: #FBBF24; }
+.copy-toast { display: none; font-size: 12px; color: var(--pk-green); font-weight: 600; padding: 6px 12px; background: var(--pk-green-glow); border-radius: 20px; border: 1px solid var(--pk-green); }
+.sentry-claude-btn { background: rgba(139,92,246,0.12); color: var(--pk-purple); border: 1px solid rgba(139,92,246,0.35); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; white-space: nowrap; transition: background 0.15s, color 0.15s; }
+.sentry-claude-btn:hover { background: var(--pk-purple); color: #fff; }
+
+/* ═══════════════════════════════════════════════════
+   FEEDBACK PAGE
+═══════════════════════════════════════════════════ */
+.feedback-filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.ai-analysis-card {
+  background: linear-gradient(135deg, rgba(14,165,160,0.08) 0%, rgba(139,92,246,0.08) 100%);
+  border: 1px solid var(--pk-teal);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.ai-analysis-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.ai-analysis-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+.ai-result { background: var(--surface); border-radius: var(--r); padding: 18px; margin-top: 16px; display: none; }
+.ai-result.show { display: block; }
+.ai-section { margin-bottom: 16px; }
+.ai-section-title { font-size: 12px; font-weight: 700; color: var(--pk-teal); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+.ai-list-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.ai-list-item:last-child { border-bottom: none; }
+.ai-num { color: var(--pk-teal); font-weight: 700; min-width: 20px; }
+.rating-breakdown { display: flex; flex-direction: column; gap: 6px; }
+.rating-row { display: flex; align-items: center; gap: 10px; }
+.rating-row .stars { width: 70px; font-size: 13px; }
+.rating-bar-wrap { flex: 1; background: var(--surface3); border-radius: 4px; height: 8px; overflow: hidden; }
+.rating-bar { height: 100%; background: var(--pk-amber); border-radius: 4px; }
+.rating-count { font-size: 12px; color: var(--text-muted); min-width: 30px; text-align: right; }
+
+/* ═══════════════════════════════════════════════════
+   BROADCAST
+═══════════════════════════════════════════════════ */
+.segment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.segment-card {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--r); padding: 14px; cursor: pointer;
+  transition: all 0.15s; text-align: center;
+}
+.segment-card.selected { border-color: var(--pk-teal); background: var(--pk-teal-glow); }
+.segment-card .seg-icon { font-size: 24px; margin-bottom: 8px; }
+.segment-card .seg-label { font-size: 13px; font-weight: 600; }
+.segment-card .seg-count { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* BROADCAST LOG */
+.bc-log-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.bc-log-item:last-child { border-bottom: none; }
+.bc-log-icon { width: 36px; height: 36px; background: var(--pk-teal-glow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.bc-log-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.bc-log-stats { margin-left: auto; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+.bc-log-stats strong { color: var(--pk-teal); font-size: 14px; display: block; }
+
+/* ═══════════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════════ */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.empty-state .empty-title { font-size: 16px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+
+/* ═══════════════════════════════════════════════════
+   MODAL / OVERLAY
+═══════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+  display: none; z-index: 1000; align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--r-lg); padding: 28px;
+  max-width: 520px; width: 90%; box-shadow: var(--shadow);
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+
+/* ═══════════════════════════════════════════════════
+   CONFIG BANNER
+═══════════════════════════════════════════════════ */
+.config-banner {
+  background: var(--pk-amber-glow);
+  border: 1px solid var(--pk-amber);
+  border-radius: var(--r);
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 13px; color: var(--text-primary);
+}
+.config-banner .cb-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.config-banner a { color: var(--pk-amber); font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════
+   SPINNER
+═══════════════════════════════════════════════════ */
+.spinner {
+  width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════
+   HEALTH CHART
+═══════════════════════════════════════════════════ */
+.mini-chart {
+  display: flex; align-items: flex-end; gap: 3px; height: 40px;
+}
+.mini-bar {
+  flex: 1; background: var(--pk-teal); border-radius: 3px 3px 0 0;
+  opacity: 0.6; transition: opacity 0.15s;
+}
+.mini-bar:hover { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  #sidebar { width: 60px; }
+  .logo-text, .nav-item span, .nav-section-label, .pk-version, .theme-toggle span { display: none; }
+  .logo-icon { margin: 0 auto; }
+  .sidebar-logo { padding: 16px 10px; }
+  .nav-item { justify-content: center; padding: 10px; }
+  .nav-badge { position: absolute; right: 4px; top: 4px; }
+  .inbox-grid { grid-template-columns: 1fr; }
+  .inbox-list { max-height: 200px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+  CONFIGURATION — Edit these values!
+══════════════════════════════════════ -->
+<script>
+const CONFIG = {
+  supabaseUrl:  'https://YOUR_SUPABASE_URL.supabase.co',
+  supabaseKey:  'YOUR_SUPABASE_ANON_KEY_HERE', // ← paste from Supabase dashboard
+  openaiKey:    'YOUR_OPENAI_API_KEY_HERE',     // ← only needed for AI Analysis button
+  resendKey:    'YOUR_RESEND_API_KEY_HERE',      // ← only needed for sending emails
+  appName:      'PetKira',
+};
+
+const DEMO_MODE = CONFIG.supabaseKey === 'YOUR_SUPABASE_ANON_KEY_HERE';
+</script>
+
+<!-- Supabase JS client (used only by the Sentry Bugs page — the rest of the
+     dashboard talks to Supabase through the hand-rolled supabase() REST
+     helper below, so this is captured under its own name to avoid clashing
+     with that function). -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const sbClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
+</script>
+
+<!-- ══════════════════════════════════════
+  APP SHELL
+══════════════════════════════════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">🐾</div>
+        <div class="logo-text">
+          <div class="brand">PetKira</div>
+          <div class="admin">ADMIN</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" onclick="showPage('health')" data-page="health">
+        <span class="nav-icon">📊</span><span>App Health</span>
+      </div>
+
+      <div class="nav-section-label">Users</div>
+      <div class="nav-item" onclick="showPage('users')" data-page="users">
+        <span class="nav-icon">👥</span><span>Users & Subscribers</span>
+      </div>
+      <div class="nav-item" onclick="showPage('feedback')" data-page="feedback">
+        <span class="nav-icon">⭐</span><span>Beta Feedback</span>
+        <span class="nav-badge" id="feedback-badge" style="display:none">!</span>
+      </div>
+
+      <div class="nav-section-label">Operations</div>
+      <div class="nav-item" onclick="showPage('inbox')" data-page="inbox">
+        <span class="nav-icon">📬</span><span>Support Inbox</span>
+        <span class="nav-badge" id="inbox-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('bugs')" data-page="bugs">
+        <span class="nav-icon">🐛</span><span>Bug Tracker</span>
+        <span class="nav-badge" id="bugs-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('sentrybugs')" data-page="sentrybugs">
+        <span class="nav-icon">🛰️</span><span>Sentry Bugs</span>
+      </div>
+      <div class="nav-item" onclick="showPage('broadcast')" data-page="broadcast">
+        <span class="nav-icon">📢</span><span>Broadcast</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span><span>Light mode</span>
+      </button>
+      <div class="pk-version">v1.0 · Local Dashboard</div>
+    </div>
+  </nav>
+
+  <!-- MAIN AREA -->
+  <div id="main">
+    <!-- TOPBAR -->
+    <div id="topbar">
+      <div class="topbar-title" id="page-title">App Health</div>
+      <div class="topbar-right">
+        <div id="status-pill" class="topbar-pill warn">
+          <span class="pulse"></span>
+          <span id="status-text">Demo Mode</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="refreshAll()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- CONFIG BANNER (shows when demo mode) -->
+      <div class="config-banner" id="config-banner">
+        <span class="cb-icon">⚠️</span>
+        <div>
+          <strong>Demo Mode — Showing sample data.</strong> To connect to your live PetKira data, open this file in a text editor, find the <code>CONFIG</code> block at the top, and replace <code>YOUR_SUPABASE_ANON_KEY_HERE</code> with your key from the <a href="https://supabase.com/dashboard/project/_/settings/api" target="_blank">Supabase dashboard</a>.
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+        PAGE 1: APP HEALTH
+      ══════════════════════════════ -->
+      <section class="page active" id="page-health">
+        <div class="stats-grid">
+          <div class="stat-card" style="--accent-color: var(--pk-teal)">
+            <div class="stat-label">Total Signups</div>
+            <div class="stat-value" id="h-total">—</div>
+            <div class="stat-sub" id="h-total-sub">all time</div>
+            <div class="stat-icon">👤</div>
+          </div>
+          <div class="stat-card" style="--accent-color: var(--pk-amber)">
+            <div class="stat-label">Active Trials</div>
+            <div class="stat-value" id="h-trials">—</div>
+            <div class="stat-sub">60-day free trial</div>
+            <div class="stat-icon">⏳</div>
+          </div>
+          <div class="stat-card" style="--accent-color: var(--pk-green)">
+            <div class="stat-label">Paid Subscribers</div>
+            <div class="stat-value" id="h-paid">—</div>
+            <div class="stat-sub">active subscriptions</div>
+            <div class="stat-icon">💳</div>
+          </div>
+          <div class="stat-card" style="--accent-color: var(--pk-red)">
+            <div class="stat-label">Open Bugs</div>
+            <div class="stat-value" id="h-bugs">—</div>
+            <div class="stat-sub">need attention</div>
+            <div class="stat-icon">🐛</div>
+          </div>
+          <div class="stat-card" style="--accent-color: var(--pk-purple)">
+            <div class="stat-label">Founding Members</div>
+            <div class="stat-value" id="h-founding">—</div>
+            <div class="stat-sub">of 200 slots</div>
+            <div class="stat-icon">🌟</div>
+          </div>
+          <div class="stat-card" style="--accent-color: var(--pk-teal)">
+            <div class="stat-label">Open Support</div>
+            <div class="stat-value" id="h-support">—</div>
+            <div class="stat-sub">unread emails</div>
+            <div class="stat-icon">📬</div>
+          </div>
+        </div>
+
+        <!-- Founding Member bar -->
+        <div class="founding-progress">
+          <div class="founding-label">🌟 Founding Member Slots — First 200 subscribers get <strong style="color:var(--pk-amber)">50% off</strong> their first year</div>
+          <div class="founding-bar-wrap">
+            <div class="founding-bar" id="founding-bar" style="width: 0%"></div>
+          </div>
+          <div class="founding-counts">
+            <span><strong id="founding-claimed">0</strong> claimed</span>
+            <span><strong id="founding-left">200</strong> remaining</span>
+          </div>
+        </div>
+
+        <!-- Activity overview -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Signups — Last 7 Days</span>
+            <span style="font-size:12px;color:var(--text-muted)" id="weekly-total-label">Loading…</span>
+          </div>
+          <div class="card-body">
+            <div class="mini-chart" id="mini-chart">
+              <div class="empty-state" style="padding:20px;width:100%">Loading chart…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Activity</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Event</th><th>User</th><th>Time</th></tr></thead>
+              <tbody id="health-activity">
+                <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:30px">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+        PAGE 2: USERS & SUBSCRIBERS
+      ══════════════════════════════ -->
+      <section class="page" id="page-users">
+        <div class="stats-grid" style="margin-bottom:20px">
+          <div class="stat-card" style="--accent-color:var(--pk-teal)">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="u-total">—</div>
+            <div class="stat-icon">👥</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-amber)">
+            <div class="stat-label">On Trial</div>
+            <div class="stat-value" id="u-trial">—</div>
+            <div class="stat-icon">⏳</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-green)">
+            <div class="stat-label">Paid</div>
+            <div class="stat-value" id="u-paid">—</div>
+            <div class="stat-icon">✅</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-red)">
+            <div class="stat-label">Churned</div>
+            <div class="stat-value" id="u-churned">—</div>
+            <div class="stat-icon">🚪</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-purple)">
+            <div class="stat-label">Founding Members</div>
+            <div class="stat-value" id="u-founding">—</div>
+            <div class="stat-icon">🌟</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">All Users</span>
+            <div style="display:flex;gap:10px;align-items:center">
+              <input type="text" placeholder="Search by email…" id="user-search" style="width:220px" oninput="filterUsers()" />
+              <select id="user-filter" onchange="filterUsers()" style="width:140px">
+                <option value="all">All statuses</option>
+                <option value="trial">Trial</option>
+                <option value="paid">Paid</option>
+                <option value="churned">Churned</option>
+                <option value="founding">Founding</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Email</th><th>Status</th><th>Member Since</th><th>Trial Ends</th><th>Actions</th></tr></thead>
+              <tbody id="users-tbody">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">Loading users…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+        PAGE 3: BETA FEEDBACK + AI
+      ══════════════════════════════ -->
+      <section class="page" id="page-feedback">
+
+        <!-- AI Analysis CTA -->
+        <div class="ai-analysis-card">
+          <div class="ai-analysis-title">🤖 AI Feedback Analysis</div>
+          <div class="ai-analysis-desc">Click below to let AI analyse all beta feedback and give you a prioritised list of what to fix first, top frustrations, and most-requested features.</div>
+          <button class="btn btn-primary" id="ai-btn" onclick="runAIAnalysis()">✨ Analyse All Feedback</button>
+          <div class="ai-result" id="ai-result">
+            <div class="ai-section">
+              <div class="ai-section-title">😤 Top Frustrations</div>
+              <div id="ai-frustrations"></div>
+            </div>
+            <div class="ai-section">
+              <div class="ai-section-title">💡 Most-Requested Features</div>
+              <div id="ai-features"></div>
+            </div>
+            <div class="ai-section">
+              <div class="ai-section-title">🐛 Blocking Bugs</div>
+              <div id="ai-bugs"></div>
+            </div>
+            <div class="ai-section">
+              <div class="ai-section-title">📋 Recommended Priority Order</div>
+              <div id="ai-priority"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating breakdown + stats -->
+        <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;margin-bottom:20px" class="feedback-top">
+          <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">
+            <div class="stat-card" style="--accent-color:var(--pk-amber)">
+              <div class="stat-label">Avg Rating</div>
+              <div class="stat-value" id="fb-avg">—</div>
+              <div class="stat-sub">out of 5 ⭐</div>
+            </div>
+            <div class="stat-card" style="--accent-color:var(--pk-teal)">
+              <div class="stat-label">Total Responses</div>
+              <div class="stat-value" id="fb-count">—</div>
+              <div class="stat-sub">submissions</div>
+            </div>
+            <div class="stat-card" style="--accent-color:var(--pk-purple)">
+              <div class="stat-label">Feature Requests</div>
+              <div class="stat-value" id="fb-features">—</div>
+              <div class="stat-sub">unique ideas</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Rating Breakdown</span></div>
+            <div class="card-body">
+              <div class="rating-breakdown" id="rating-breakdown">
+                <div style="color:var(--text-muted);font-size:13px">Loading…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">All Feedback</span>
+            <div class="feedback-filters" style="margin:0">
+              <select id="fb-filter" onchange="filterFeedback()" style="width:150px">
+                <option value="all">All categories</option>
+                <option value="bug">Bug reports</option>
+                <option value="feature_request">Feature requests</option>
+                <option value="general">General</option>
+                <option value="praise">Praise</option>
+              </select>
+              <select id="fb-rating-filter" onchange="filterFeedback()" style="width:120px">
+                <option value="all">All ratings</option>
+                <option value="5">5 stars</option>
+                <option value="4">4 stars</option>
+                <option value="3">3 stars</option>
+                <option value="2">2 stars</option>
+                <option value="1">1 star</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>User</th><th>Rating</th><th>Category</th><th>Feedback</th><th>Date</th></tr></thead>
+              <tbody id="feedback-tbody">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">Loading feedback…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+        PAGE 4: SUPPORT INBOX
+      ══════════════════════════════ -->
+      <section class="page" id="page-inbox">
+        <div class="inbox-grid">
+          <div class="inbox-list" id="inbox-list">
+            <div style="padding:30px;text-align:center;color:var(--text-muted)">Loading emails…</div>
+          </div>
+          <div class="inbox-detail" id="inbox-detail">
+            <div class="empty-state">
+              <div class="empty-icon">📬</div>
+              <div class="empty-title">Select an email to read</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+        PAGE 5: BUG TRACKER
+      ══════════════════════════════ -->
+      <section class="page" id="page-bugs">
+        <div class="stats-grid">
+          <div class="stat-card" style="--accent-color:var(--pk-red)">
+            <div class="stat-label">New / Unread</div>
+            <div class="stat-value" id="b-new">—</div>
+            <div class="stat-icon">🆕</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-amber)">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value" id="b-progress">—</div>
+            <div class="stat-icon">🔧</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-green)">
+            <div class="stat-label">Fixed</div>
+            <div class="stat-value" id="b-fixed">—</div>
+            <div class="stat-icon">✅</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-teal)">
+            <div class="stat-label">Users Notified</div>
+            <div class="stat-value" id="b-notified">—</div>
+            <div class="stat-icon">📣</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Bug Reports</span>
+            <div style="display:flex;gap:10px;align-items:center">
+              <select id="bug-status-filter" onchange="filterBugs()" style="width:140px">
+                <option value="all">All statuses</option>
+                <option value="new">New</option>
+                <option value="in_progress">In Progress</option>
+                <option value="fixed">Fixed</option>
+                <option value="notified">Notified</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Title</th><th>Status</th><th>Affected Users</th><th>Reported</th><th>Actions</th></tr></thead>
+              <tbody id="bugs-tbody">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">Loading bugs…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+        PAGE 5b: SENTRY BUGS
+      ══════════════════════════════ -->
+      <section class="page" id="page-sentrybugs">
+        <div class="stats-grid">
+          <div class="stat-card" style="--accent-color:var(--pk-red)">
+            <div class="stat-label">New / Unread</div>
+            <div class="stat-value" id="sb-new">—</div>
+            <div class="stat-icon">🆕</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-amber)">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value" id="sb-progress">—</div>
+            <div class="stat-icon">🔧</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-green)">
+            <div class="stat-label">Fixed</div>
+            <div class="stat-value" id="sb-fixed">—</div>
+            <div class="stat-icon">✅</div>
+          </div>
+          <div class="stat-card" style="--accent-color:var(--pk-teal)">
+            <div class="stat-label">Users Notified</div>
+            <div class="stat-value" id="sb-notified">—</div>
+            <div class="stat-icon">📣</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Sentry Events</span>
+            <div style="display:flex;gap:10px;align-items:center">
+              <select id="sentry-bug-status-filter" onchange="filterSentryBugs()" style="width:140px">
+                <option value="all">All statuses</option>
+                <option value="new">New</option>
+                <option value="in_progress">In Progress</option>
+                <option value="fixed">Fixed</option>
+                <option value="notified">Notified</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Title</th><th>Status</th><th>Events</th><th>Reported</th><th>Link</th><th>Actions</th></tr></thead>
+              <tbody id="sentry-bugs-tbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">Loading bugs…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+        PAGE 6: BROADCAST
+      ══════════════════════════════ -->
+      <section class="page" id="page-broadcast">
+        <div class="card">
+          <div class="card-header"><span class="card-title">New Broadcast</span></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Target Audience</label>
+              <div class="segment-grid" id="segment-grid">
+                <div class="segment-card selected" onclick="selectSegment(this,'all')" data-segment="all">
+                  <div class="seg-icon">📢</div>
+                  <div class="seg-label">All Users</div>
+                  <div class="seg-count" id="seg-all-count">— users</div>
+                </div>
+                <div class="segment-card" onclick="selectSegment(this,'trial')" data-segment="trial">
+                  <div class="seg-icon">⏳</div>
+                  <div class="seg-label">Trial Users</div>
+                  <div class="seg-count" id="seg-trial-count">— users</div>
+                </div>
+                <div class="segment-card" onclick="selectSegment(this,'paid')" data-segment="paid">
+                  <div class="seg-icon">💳</div>
+                  <div class="seg-label">Paid Subscribers</div>
+                  <div class="seg-count" id="seg-paid-count">— users</div>
+                </div>
+                <div class="segment-card" onclick="selectSegment(this,'founding')" data-segment="founding">
+                  <div class="seg-icon">🌟</div>
+                  <div class="seg-label">Founding Members</div>
+                  <div class="seg-count" id="seg-founding-count">— users</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject Line</label>
+              <input type="text" id="bc-subject" placeholder="e.g. PetKira just got smarter 🐾" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea id="bc-body" rows="8" placeholder="Write your message here…" style="resize:vertical"></textarea>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" onclick="sendBroadcast()">📢 Send Broadcast</button>
+              <button class="btn btn-ghost" onclick="previewBroadcast()">👁 Preview</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Broadcast History</span></div>
+          <div class="card-body" id="bc-log">
+            <div style="color:var(--text-muted);font-size:13px">Loading history…</div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-box">
+    <div class="modal-title" id="modal-title">Modal</div>
+    <div id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+
+// ─── DEMO DATA ────────────────────────────────────────────────────────────────
+const DEMO = {
+  users: [
+    { id:'u1', email:'amaka@gmail.com',    status:'founding', created_at:'2025-12-01', trial_ends:'2026-01-30', is_founding:true },
+    { id:'u2', email:'john.k@outlook.com', status:'trial',    created_at:'2026-01-10', trial_ends:'2026-03-10', is_founding:false },
+    { id:'u3', email:'sarah.pet@yahoo.com',status:'paid',     created_at:'2025-11-15', trial_ends:null,         is_founding:false },
+    { id:'u4', email:'emeka.ola@gmail.com',status:'founding', created_at:'2025-11-20', trial_ends:null,         is_founding:true },
+    { id:'u5', email:'tunde@proton.me',    status:'trial',    created_at:'2026-02-05', trial_ends:'2026-04-05', is_founding:false },
+    { id:'u6', email:'grace.ad@gmail.com', status:'churned',  created_at:'2025-10-10', trial_ends:null,         is_founding:false },
+    { id:'u7', email:'michael.b@icloud.com',status:'paid',   created_at:'2026-01-20', trial_ends:null,         is_founding:false },
+    { id:'u8', email:'nneka.chi@gmail.com',status:'founding', created_at:'2025-12-05', trial_ends:null,         is_founding:true },
+  ],
+  bugs: [
+    { id:'b1', title:'Meal plan crashes on iOS 17.4 when offline', status:'new', affected_count:14, created_at:'2026-09-20', ai_diagnosis:'The app tries to fetch nutritional data from the API even when offline. The fix is to add a network check before any API call and serve cached meal data instead. Add `NetInfo.fetch()` check in MealPlanScreen.', error_message:'TypeError: Cannot read property of undefined (reading \'calories\')', stack_trace:'at MealPlanScreen.js:142\nat renderMeals (MealPlanScreen.js:89)\nat callCallback (react-native/Libraries/Core/index.js:84)' },
+    { id:'b2', title:'Push notifications not delivered on Android 14', status:'in_progress', affected_count:7, created_at:'2026-09-18', ai_diagnosis:'Android 14 introduced stricter notification permission handling. The app needs to explicitly request POST_NOTIFICATIONS permission at runtime. Update NotificationService.ts to call `PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)`.', error_message:'NotificationService: permission denied', stack_trace:'at NotificationService.ts:56\nat scheduleReminder (NotificationService.ts:34)' },
+    { id:'b3', title:'Pet profile image fails to upload on slow connections', status:'new', affected_count:3, created_at:'2026-09-22', ai_diagnosis:'The image upload has no timeout handler — on slow connections it silently fails. Add a 30-second timeout to the Supabase storage upload call and show a user-friendly retry prompt.', error_message:'Upload timeout after 30000ms', stack_trace:'at PetProfile.tsx:208\nat handleImageUpload (PetProfile.tsx:178)' },
+    { id:'b4', title:'Subscription renewal email not sent after trial ends', status:'fixed', affected_count:2, created_at:'2026-09-10', ai_diagnosis:'Fixed: Resend webhook was missing the trial_ended event type in its filter.', error_message:null, stack_trace:null },
+  ],
+  feedback: [
+    { id:'f1', user_email:'amaka@gmail.com',    rating:5, category:'praise',          message:'Love how it personalises my dog\'s meal plan! Truly impressive.',        created_at:'2026-09-21', app_version:'1.0.2' },
+    { id:'f2', user_email:'john.k@outlook.com', rating:3, category:'bug',             message:'App crashes every time I go offline. Really frustrating during walks.',   created_at:'2026-09-20', app_version:'1.0.2' },
+    { id:'f3', user_email:'sarah.pet@yahoo.com',rating:4, category:'feature_request', message:'Please add a weight tracking chart over time. Would help so much!',        created_at:'2026-09-19', app_version:'1.0.1' },
+    { id:'f4', user_email:'emeka.ola@gmail.com',rating:2, category:'bug',             message:'Notifications never come on my Samsung. I miss meal reminders every day.', created_at:'2026-09-18', app_version:'1.0.2' },
+    { id:'f5', user_email:'tunde@proton.me',    rating:5, category:'praise',          message:'My vet was impressed by the meal reports I showed from this app.',          created_at:'2026-09-17', app_version:'1.0.1' },
+    { id:'f6', user_email:'grace.ad@gmail.com', rating:1, category:'bug',             message:'Can\'t upload my pet photo at all. Stuck spinning forever.',                created_at:'2026-09-16', app_version:'1.0.2' },
+    { id:'f7', user_email:'michael.b@icloud.com',rating:4, category:'feature_request',message:'A multi-pet feature would be great — I have 2 dogs and a cat.',            created_at:'2026-09-15', app_version:'1.0.1' },
+    { id:'f8', user_email:'nneka.chi@gmail.com',rating:3, category:'feature_request', message:'Would love Apple Health integration for activity data.',                    created_at:'2026-09-14', app_version:'1.0.0' },
+  ],
+  emails: [
+    { id:'e1', from:'frustrated.user@gmail.com', subject:'App keeps crashing!', body:'Hi PetKira team,\n\nI\'ve been using the app for 2 weeks and absolutely love the concept, but the app crashes every time I try to access the meal plan while I\'m away from home without Wi-Fi. It\'s making the app unusable during walks which is exactly when I need it most.\n\nPlease fix this urgently.\n\nThanks,\nChris', received_at:'2026-09-22T14:32:00Z', status:'unread', ai_reply:'Hi Chris,\n\nThank you for reaching out — we truly appreciate your patience and we\'re sorry this has disrupted your experience.\n\nWe\'re aware of an issue affecting the app when switching to offline mode, and our team is actively working on a fix. We expect to release a patch within the next few days.\n\nIn the meantime, you can work around this by opening your pet\'s meal plan at home while connected to Wi-Fi before heading out — the app will cache the latest plan.\n\nWe\'ll send you a direct email as soon as the update is live.\n\nWarm regards,\nThe PetKira Team 🐾' },
+    { id:'e2', from:'potential.subscriber@outlook.com', subject:'Question about founding member discount', body:'Hello,\n\nI saw the founding member offer — 50% off for the first year for the first 200 subscribers. Is this still available? How do I make sure I get it?\n\nBest,\nTemi', received_at:'2026-09-21T09:15:00Z', status:'unread', ai_reply:'Hi Temi,\n\nGreat question! Yes, the Founding Member offer is still available — we currently have slots remaining and you\'re right on time.\n\nWhen you subscribe through the app, you\'ll automatically be enrolled as a Founding Member if you\'re within the first 200 subscribers. You\'ll see the 50% discount applied at checkout before you confirm.\n\nNo special code needed — it\'s automatic for the first 200!\n\nLet us know if you have any other questions.\n\nCheers,\nThe PetKira Team 🐾' },
+    { id:'e3', from:'happy.dog.owner@yahoo.com', subject:'This app changed my dog\'s life', body:'Just wanted to say — my vet commented that Biscuit\'s coat and energy have noticeably improved since I started following PetKira\'s meal plans. She asked what I changed!\n\nThank you so much.',  received_at:'2026-09-20T16:45:00Z', status:'read', ai_reply:'What wonderful news about Biscuit! We\'re absolutely delighted to hear this. Moments like these are exactly why we built PetKira.\n\nWould you mind if we shared your story (anonymised if you prefer) as a testimonial? Your experience could inspire other pet owners.\n\nThank you for making our day!\n\nWith love,\nThe PetKira Team 🐾' },
+  ],
+  broadcasts: [
+    { id:'bc1', subject:'Welcome to PetKira Beta! 🐾', segment:'all', sent_count:8, opened:6, sent_at:'2026-09-01T10:00:00Z' },
+    { id:'bc2', subject:'Your 60-day trial is halfway done — here\'s what\'s new', segment:'trial', sent_count:3, opened:2, sent_at:'2026-09-15T09:00:00Z' },
+  ],
+};
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let allUsers = [], allBugs = [], allFeedback = [], allEmails = [], selectedBug = null;
+let selectedSegment = 'all';
+let openEmailId = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.onload = () => {
+  if (!DEMO_MODE) {
+    document.getElementById('config-banner').style.display = 'none';
+    document.getElementById('status-text').textContent = 'Live';
+    document.getElementById('status-pill').classList.remove('warn');
+    document.getElementById('status-pill').classList.add('topbar-pill');
+  }
+  loadAll();
+};
+
+async function loadAll() {
+  await Promise.all([loadUsers(), loadBugs(), loadFeedback(), loadEmails()]);
+  renderHealth();
+  updateBadges();
+}
+
+async function supabase(table, query='') {
+  if (DEMO_MODE) return null;
+  try {
+    const r = await fetch(`${CONFIG.supabaseUrl}/rest/v1/${table}${query}`, {
+      headers: {
+        'apikey': CONFIG.supabaseKey,
+        'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+// ─── LOAD DATA ────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  const data = await supabase('users', '?select=*&order=created_at.desc');
+  allUsers = data || DEMO.users;
+  renderUsers();
+  renderBroadcastCounts();
+}
+
+async function loadBugs() {
+  const data = await supabase('bugs', '?select=*&order=created_at.desc');
+  allBugs = data || DEMO.bugs;
+  renderBugs();
+}
+
+async function loadFeedback() {
+  const data = await supabase('feedback', '?select=*&order=created_at.desc');
+  allFeedback = data || DEMO.feedback;
+  renderFeedback();
+}
+
+async function loadEmails() {
+  const data = await supabase('support_emails', '?select=*&order=received_at.desc');
+  allEmails = data || DEMO.emails;
+  renderInbox();
+}
+
+function refreshAll() { loadAll(); }
+
+// ─── PAGES ────────────────────────────────────────────────────────────────────
+const PAGE_TITLES = { health:'App Health', users:'Users & Subscribers', feedback:'Beta Feedback', inbox:'Support Inbox', bugs:'Bug Tracker', sentrybugs:'Sentry Bugs', broadcast:'Broadcast' };
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector(`[data-page="${id}"]`).classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[id];
+}
+
+// ─── THEME ────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  html.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+  document.querySelector('.theme-toggle span:last-child').textContent = isDark ? 'Dark mode' : 'Light mode';
+}
+
+// ─── RENDER: HEALTH ──────────────────────────────────────────────────────────
+function renderHealth() {
+  const total = allUsers.length;
+  const trials = allUsers.filter(u => u.status === 'trial').length;
+  const paid = allUsers.filter(u => u.status === 'paid' || u.status === 'founding').length;
+  const openBugs = allBugs.filter(b => b.status === 'new' || b.status === 'in_progress').length;
+  const founding = allUsers.filter(u => u.is_founding || u.status === 'founding').length;
+  const unread = allEmails.filter(e => e.status === 'unread').length;
+
+  document.getElementById('h-total').textContent = total;
+  document.getElementById('h-trials').textContent = trials;
+  document.getElementById('h-paid').textContent = paid;
+  document.getElementById('h-bugs').textContent = openBugs;
+  document.getElementById('h-founding').textContent = founding;
+  document.getElementById('h-support').textContent = unread;
+
+  // Founding bar
+  const pct = Math.min(100, (founding / 200) * 100);
+  document.getElementById('founding-bar').style.width = pct + '%';
+  document.getElementById('founding-claimed').textContent = founding;
+  document.getElementById('founding-left').textContent = 200 - founding;
+
+  // Weekly chart (demo: random bars)
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const vals = DEMO_MODE ? [2,1,3,0,2,1,4] : [1,1,1,1,1,1,1];
+  const max = Math.max(...vals) || 1;
+  const chart = document.getElementById('mini-chart');
+  chart.innerHTML = vals.map((v,i) => `
+    <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px">
+      <div class="mini-bar" style="height:${Math.round((v/max)*36)+4}px" title="${days[i]}: ${v} signups"></div>
+      <div style="font-size:10px;color:var(--text-muted)">${days[i]}</div>
+    </div>
+  `).join('');
+  const weekTotal = vals.reduce((a,b) => a+b,0);
+  document.getElementById('weekly-total-label').textContent = `${weekTotal} new signups this week`;
+
+  // Activity feed
+  const tbody = document.getElementById('health-activity');
+  const events = [
+    ...allUsers.slice(0,3).map(u => ({ icon:'👤', event:'New signup', user:u.email, time:u.created_at })),
+    ...allBugs.filter(b=>b.status==='new').slice(0,2).map(b => ({ icon:'🐛', event:'New bug reported', user:b.title.substring(0,40)+'…', time:b.created_at })),
+    ...allEmails.filter(e=>e.status==='unread').slice(0,2).map(e => ({ icon:'📬', event:'Support email', user:e.from, time:e.received_at })),
+  ].sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0,8);
+
+  tbody.innerHTML = events.length ? events.map(e => `
+    <tr>
+      <td><span style="margin-right:6px">${e.icon}</span>${e.event}</td>
+      <td style="color:var(--text-secondary)">${e.user}</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${timeAgo(e.time)}</td>
+    </tr>
+  `).join('') : `<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:30px">No recent activity</td></tr>`;
+}
+
+// ─── RENDER: USERS ────────────────────────────────────────────────────────────
+let userFilter = '';
+function renderUsers(users) {
+  const list = users || allUsers;
+  const total = list.length;
+  const trial = list.filter(u => u.status === 'trial').length;
+  const paid = list.filter(u => u.status === 'paid').length;
+  const churned = list.filter(u => u.status === 'churned').length;
+  const founding = list.filter(u => u.is_founding || u.status === 'founding').length;
+
+  document.getElementById('u-total').textContent = allUsers.length;
+  document.getElementById('u-trial').textContent = allUsers.filter(u=>u.status==='trial').length;
+  document.getElementById('u-paid').textContent = allUsers.filter(u=>u.status==='paid').length;
+  document.getElementById('u-churned').textContent = allUsers.filter(u=>u.status==='churned').length;
+  document.getElementById('u-founding').textContent = allUsers.filter(u=>u.is_founding||u.status==='founding').length;
+
+  const tbody = document.getElementById('users-tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No users found</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(u => {
+    const isF = u.is_founding || u.status === 'founding';
+    const badge = isF ? '<span class="badge badge-purple" style="margin-left:4px">🌟 Founding</span>' : statusBadge(u.status);
+    return `<tr>
+      <td><span style="color:var(--text-secondary)">${u.email}</span>${isF ? ' <span class="badge badge-purple" style="font-size:10px">🌟</span>' : ''}</td>
+      <td>${statusBadge(u.status)}</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${fmtDate(u.created_at)}</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${u.trial_ends ? fmtDate(u.trial_ends) : '—'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="emailUser('${u.email}')">✉️ Email</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterUsers() {
+  const q = document.getElementById('user-search').value.toLowerCase();
+  const f = document.getElementById('user-filter').value;
+  const list = allUsers.filter(u => {
+    const matchQ = !q || u.email.toLowerCase().includes(q);
+    const matchF = f === 'all' || u.status === f || (f === 'founding' && (u.is_founding || u.status === 'founding'));
+    return matchQ && matchF;
+  });
+  renderUsers(list);
+}
+
+// ─── RENDER: FEEDBACK ────────────────────────────────────────────────────────
+function renderFeedback(list) {
+  list = list || allFeedback;
+  const count = list.length;
+  const avg = count ? (list.reduce((s,f)=>s+(f.rating||0),0)/count).toFixed(1) : '—';
+  const features = list.filter(f=>f.category==='feature_request').length;
+  document.getElementById('fb-avg').textContent = avg;
+  document.getElementById('fb-count').textContent = allFeedback.length;
+  document.getElementById('fb-features').textContent = allFeedback.filter(f=>f.category==='feature_request').length;
+
+  // Rating breakdown
+  const breakdown = document.getElementById('rating-breakdown');
+  const maxCount = Math.max(1, ...([5,4,3,2,1].map(r => allFeedback.filter(f=>f.rating===r).length)));
+  breakdown.innerHTML = [5,4,3,2,1].map(r => {
+    const c = allFeedback.filter(f=>f.rating===r).length;
+    const pct = Math.round((c/maxCount)*100);
+    const stars = '★'.repeat(r) + '☆'.repeat(5-r);
+    return `<div class="rating-row">
+      <span class="stars" style="font-size:12px">${stars}</span>
+      <div class="rating-bar-wrap"><div class="rating-bar" style="width:${pct}%"></div></div>
+      <span class="rating-count">${c}</span>
+    </div>`;
+  }).join('');
+
+  // Table
+  const tbody = document.getElementById('feedback-tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No feedback yet</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(f => {
+    const stars = '★'.repeat(f.rating||0) + '☆'.repeat(5-(f.rating||0));
+    return `<tr>
+      <td style="color:var(--text-secondary)">${f.user_email || 'Anonymous'}</td>
+      <td><span class="stars">${stars}</span></td>
+      <td>${catBadge(f.category)}</td>
+      <td style="max-width:300px;line-height:1.5">${f.message || '—'}</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${timeAgo(f.created_at)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterFeedback() {
+  const cat = document.getElementById('fb-filter').value;
+  const rat = document.getElementById('fb-rating-filter').value;
+  const list = allFeedback.filter(f => {
+    const matchC = cat === 'all' || f.category === cat;
+    const matchR = rat === 'all' || String(f.rating) === rat;
+    return matchC && matchR;
+  });
+  renderFeedback(list);
+}
+
+// AI ANALYSIS
+async function runAIAnalysis() {
+  const btn = document.getElementById('ai-btn');
+  btn.innerHTML = '<span class="spinner"></span> Analysing…';
+  btn.disabled = true;
+
+  const result = document.getElementById('ai-result');
+
+  if (DEMO_MODE || !CONFIG.openaiKey || CONFIG.openaiKey === 'YOUR_OPENAI_API_KEY_HERE') {
+    // Demo analysis
+    await new Promise(r => setTimeout(r, 1800));
+    document.getElementById('ai-frustrations').innerHTML = makeAIList([
+      'App crashes when offline — reported by multiple beta users during walks',
+      'Push notifications not working on Android — users miss meal reminders daily',
+      'Photo upload spins forever on slow connections',
+    ]);
+    document.getElementById('ai-features').innerHTML = makeAIList([
+      'Weight tracking chart over time with trend visualization',
+      'Multi-pet support — several users have 2+ pets',
+      'Apple Health / Google Fit integration for activity data',
+    ]);
+    document.getElementById('ai-bugs').innerHTML = makeAIList([
+      'Offline crash (MealPlanScreen.js:142) — 14 users affected — URGENT',
+      'Android push notification permission denied (NotificationService.ts:56) — 7 users',
+      'Image upload timeout — 3 users affected',
+    ]);
+    document.getElementById('ai-priority').innerHTML = makeAIList([
+      'Fix offline crash — highest impact, most affected users (14)',
+      'Fix Android notifications — core feature broken for Android users',
+      'Fix photo upload timeout — blocks onboarding flow',
+      'Build weight tracking chart — most-requested feature',
+      'Add multi-pet support — second most-requested',
+    ]);
+    result.classList.add('show');
+    btn.innerHTML = '✨ Re-Analyse Feedback';
+    btn.disabled = false;
+    return;
+  }
+
+  // Real OpenAI call
+  const feedbackText = allFeedback.map((f,i) => `${i+1}. Rating: ${f.rating}/5 | Category: ${f.category} | "${f.message}"`).join('\n');
+  try {
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${CONFIG.openaiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{
+          role: 'system',
+          content: 'You are a product analyst for PetKira, a pet nutrition app. Analyse beta feedback and return a JSON object with keys: frustrations (array of 3 strings), features (array of 3 strings), bugs (array of 3 strings), priority (array of 5 strings). Each string should be concise and actionable.'
+        }, {
+          role: 'user',
+          content: `Here is beta feedback from our users:\n\n${feedbackText}\n\nReturn JSON only.`
+        }],
+        response_format: { type: 'json_object' }
+      })
+    });
+    const data = await resp.json();
+    const analysis = JSON.parse(data.choices[0].message.content);
+    document.getElementById('ai-frustrations').innerHTML = makeAIList(analysis.frustrations || []);
+    document.getElementById('ai-features').innerHTML = makeAIList(analysis.features || []);
+    document.getElementById('ai-bugs').innerHTML = makeAIList(analysis.bugs || []);
+    document.getElementById('ai-priority').innerHTML = makeAIList(analysis.priority || []);
+    result.classList.add('show');
+  } catch(e) {
+    alert('AI analysis failed: ' + e.message);
+  }
+  btn.innerHTML = '✨ Re-Analyse Feedback';
+  btn.disabled = false;
+}
+
+function makeAIList(items) {
+  return items.map((item, i) => `
+    <div class="ai-list-item">
+      <span class="ai-num">${i+1}.</span>
+      <span>${item}</span>
+    </div>
+  `).join('');
+}
+
+// ─── RENDER: INBOX ───────────────────────────────────────────────────────────
+function renderInbox() {
+  const list = document.getElementById('inbox-list');
+  if (!allEmails.length) {
+    list.innerHTML = `<div style="padding:30px;text-align:center;color:var(--text-muted)">No emails yet</div>`;
+    return;
+  }
+  list.innerHTML = allEmails.map(e => `
+    <div class="inbox-item ${e.status === 'unread' ? 'unread' : ''} ${openEmailId===e.id?'active':''}" onclick="openEmail('${e.id}')">
+      <div>
+        <span class="inbox-item-time">${timeAgo(e.received_at)}</span>
+        <div class="inbox-item-from">${e.from}</div>
+        <div class="inbox-item-sub">${e.subject}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openEmail(id) {
+  openEmailId = id;
+  const email = allEmails.find(e => e.id === id);
+  if (!email) return;
+  email.status = 'read';
+  renderInbox();
+  updateBadges();
+
+  const detail = document.getElementById('inbox-detail');
+  detail.innerHTML = `
+    <div class="email-header">
+      <div class="email-subject">${email.subject}</div>
+      <div class="email-meta">From: <strong>${email.from}</strong> · ${timeAgo(email.received_at)}</div>
+    </div>
+    <div class="email-body">${email.body.replace(/\n/g,'<br>')}</div>
+    <div class="ai-reply-box">
+      <div class="ai-reply-label">🤖 AI Draft Reply</div>
+      <textarea id="reply-draft-${id}" rows="8" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text-primary)">${email.ai_reply || ''}</textarea>
+    </div>
+    <div class="reply-actions">
+      <button class="btn btn-primary" onclick="sendReply('${id}')">📤 Send Reply</button>
+      <button class="btn btn-ghost" onclick="archiveEmail('${id}')">Archive</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteEmail('${id}')">Delete</button>
+    </div>
+  `;
+}
+
+function sendReply(id) {
+  const reply = document.getElementById('reply-draft-' + id).value;
+  if (!reply.trim()) { alert('Reply is empty!'); return; }
+  if (DEMO_MODE) {
+    showToast('✅ Reply sent! (Demo mode — no actual email sent)');
+    allEmails = allEmails.filter(e => e.id !== id);
+    openEmailId = null;
+    renderInbox();
+    document.getElementById('inbox-detail').innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">Reply sent</div></div>`;
+    updateBadges();
+    return;
+  }
+  // Real Resend send
+  showToast('📤 Sending…');
+}
+
+function archiveEmail(id) {
+  allEmails = allEmails.filter(e => e.id !== id);
+  openEmailId = null;
+  renderInbox();
+  document.getElementById('inbox-detail').innerHTML = `<div class="empty-state"><div class="empty-icon">📬</div><div class="empty-title">Select an email to read</div></div>`;
+  updateBadges();
+}
+
+function deleteEmail(id) { archiveEmail(id); }
+
+// ─── RENDER: BUGS ─────────────────────────────────────────────────────────────
+function renderBugs(list) {
+  list = list || allBugs;
+  document.getElementById('b-new').textContent = allBugs.filter(b=>b.status==='new').length;
+  document.getElementById('b-progress').textContent = allBugs.filter(b=>b.status==='in_progress').length;
+  document.getElementById('b-fixed').textContent = allBugs.filter(b=>b.status==='fixed').length;
+  document.getElementById('b-notified').textContent = allBugs.filter(b=>b.status==='notified').length;
+
+  const tbody = document.getElementById('bugs-tbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:40px">🎉 No bugs found!</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(b => `
+    <tr class="bug-row" onclick="toggleBug('${b.id}')">
+      <td>
+        <div style="font-weight:600;color:var(--text-primary)">${b.title}</div>
+        ${b.error_message ? `<div class="mono" style="font-size:11px;color:var(--pk-red);margin-top:3px">${b.error_message}</div>` : ''}
+      </td>
+      <td>${bugStatusBadge(b.status)}</td>
+      <td><span style="color:var(--pk-amber);font-weight:600">${b.affected_count || 0}</span> users</td>
+      <td style="color:var(--text-muted);white-space:nowrap">${timeAgo(b.created_at)}</td>
+      <td>
+        <select onchange="updateBugStatus('${b.id}',this.value)" onclick="event.stopPropagation()" style="width:120px;padding:5px 8px;font-size:12px">
+          <option ${b.status==='new'?'selected':''} value="new">New</option>
+          <option ${b.status==='in_progress'?'selected':''} value="in_progress">In Progress</option>
+          <option ${b.status==='fixed'?'selected':''} value="fixed">Fixed</option>
+          <option ${b.status==='notified'?'selected':''} value="notified">Notified</option>
+        </select>
+      </td>
+    </tr>
+    <tr id="expand-${b.id}">
+      <td colspan="5" style="padding:0">
+        <div class="bug-expand" id="bug-expand-${b.id}">
+          ${b.ai_diagnosis ? `
+            <div class="ai-diagnosis">
+              <div class="ai-diagnosis-label">🤖 AI Diagnosis</div>
+              ${b.ai_diagnosis}
+            </div>` : ''}
+          ${b.stack_trace ? `
+            <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Stack Trace</div>
+            <div class="bug-stack">${b.stack_trace}</div>` : ''}
+          <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+            <button class="send-claude-btn" onclick="sendToClaudeCode('${b.id}',event)">
+              📋 Send to Claude Code
+            </button>
+            <span class="copy-toast" id="toast-${b.id}">✅ Copied to clipboard!</span>
+            ${b.affected_count ? `<button class="btn btn-ghost btn-sm" onclick="notifyUsers('${b.id}',event)">📣 Notify ${b.affected_count} users</button>` : ''}
+          </div>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function toggleBug(id) {
+  const el = document.getElementById('bug-expand-' + id);
+  el.classList.toggle('show');
+}
+
+function filterBugs() {
+  const f = document.getElementById('bug-status-filter').value;
+  const list = f === 'all' ? allBugs : allBugs.filter(b => b.status === f);
+  renderBugs(list);
+}
+
+function updateBugStatus(id, status) {
+  const bug = allBugs.find(b => b.id === id);
+  if (bug) bug.status = status;
+  renderBugs();
+  renderHealth();
+  updateBadges();
+  if (!DEMO_MODE) {
+    supabaseUpdate('bugs', id, { status });
+  }
+}
+
+async function supabaseUpdate(table, id, data) {
+  if (DEMO_MODE) return;
+  await fetch(`${CONFIG.supabaseUrl}/rest/v1/${table}?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': CONFIG.supabaseKey,
+      'Authorization': `Bearer ${CONFIG.supabaseKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(data)
+  });
+}
+
+function sendToClaudeCode(id, event) {
+  event.stopPropagation();
+  const bug = allBugs.find(b => b.id === id);
+  if (!bug) return;
+  const prompt = `# PetKira Bug Fix Task
+
+## Bug: ${bug.title}
+**Status:** ${bug.status}
+**Affected Users:** ${bug.affected_count || 'unknown'}
+**Reported:** ${fmtDate(bug.created_at)}
+
+## Error
+\`\`\`
+${bug.error_message || 'No error message'}
+\`\`\`
+
+## Stack Trace
+\`\`\`
+${bug.stack_trace || 'No stack trace available'}
+\`\`\`
+
+## AI Diagnosis
+${bug.ai_diagnosis || 'No AI diagnosis yet'}
+
+## Task
+Please investigate and fix this bug in the PetKira React Native / Expo codebase.
+1. Find the relevant file(s) mentioned in the stack trace
+2. Diagnose the root cause
+3. Write the fix
+4. Explain what you changed and why
+5. Confirm no other parts of the app are affected
+
+Project: PetKira (React Native / Expo / EAS Build)
+Supabase project: YOUR_SUPABASE_PROJECT_REF
+`;
+
+  openModal('Send to Claude Code — Crash Report', `<textarea id="claude-prompt-textarea" rows="10" style="width:100%;font-size:12px;font-family:monospace;background:var(--bg);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:12px;resize:vertical">${prompt}</textarea>`, [
+    { label:'📋 Copy to Clipboard', cls:'btn-primary', action:'copyClaudePrompt(this)' },
+    { label:'Close', cls:'btn-ghost', action:'closeModal()' }
+  ]);
+}
+
+function copyClaudePrompt(btn) {
+  const textarea = document.getElementById('claude-prompt-textarea');
+  navigator.clipboard.writeText(textarea.value).then(() => {
+    const original = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => { btn.textContent = original; }, 2000);
+  });
+}
+
+function notifyUsers(bugId, event) {
+  event.stopPropagation();
+  const bug = allBugs.find(b => b.id === bugId);
+  if (!bug) return;
+  if (DEMO_MODE) {
+    showToast(`✅ Demo: Would notify ${bug.affected_count} users about "${bug.title}"`);
+    bug.status = 'notified';
+    renderBugs();
+    return;
+  }
+  showToast(`📣 Notifying ${bug.affected_count} users…`);
+}
+
+// ─── BROADCAST ────────────────────────────────────────────────────────────────
+function renderBroadcastCounts() {
+  const all = allUsers.length;
+  const trial = allUsers.filter(u=>u.status==='trial').length;
+  const paid = allUsers.filter(u=>u.status==='paid').length;
+  const founding = allUsers.filter(u=>u.is_founding||u.status==='founding').length;
+
+  document.getElementById('seg-all-count').textContent = `${all} users`;
+  document.getElementById('seg-trial-count').textContent = `${trial} users`;
+  document.getElementById('seg-paid-count').textContent = `${paid} users`;
+  document.getElementById('seg-founding-count').textContent = `${founding} users`;
+  document.getElementById('u-total').textContent = all;
+  document.getElementById('u-trial').textContent = trial;
+  document.getElementById('u-paid').textContent = paid;
+  document.getElementById('u-churned').textContent = allUsers.filter(u=>u.status==='churned').length;
+  document.getElementById('u-founding').textContent = founding;
+
+  // Broadcast log
+  const log = document.getElementById('bc-log');
+  const bcs = DEMO.broadcasts;
+  if (!bcs.length) { log.innerHTML = `<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px">No broadcasts sent yet</div>`; return; }
+  log.innerHTML = bcs.map(bc => `
+    <div class="bc-log-item">
+      <div class="bc-log-icon">📢</div>
+      <div>
+        <div style="font-weight:600;font-size:13.5px">${bc.subject}</div>
+        <div class="bc-log-meta">To: ${bc.segment === 'all' ? 'All Users' : bc.segment} · ${fmtDate(bc.sent_at)}</div>
+      </div>
+      <div class="bc-log-stats">
+        <strong>${bc.opened}</strong>
+        <span>/${bc.sent_count} opened</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectSegment(el, seg) {
+  document.querySelectorAll('.segment-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSegment = seg;
+}
+
+function sendBroadcast() {
+  const subject = document.getElementById('bc-subject').value.trim();
+  const body = document.getElementById('bc-body').value.trim();
+  if (!subject || !body) { alert('Please fill in both subject and message.'); return; }
+  const segCount = {
+    all: allUsers.length,
+    trial: allUsers.filter(u=>u.status==='trial').length,
+    paid: allUsers.filter(u=>u.status==='paid').length,
+    founding: allUsers.filter(u=>u.is_founding||u.status==='founding').length,
+  }[selectedSegment];
+
+  if (!confirm(`Send "${subject}" to ${segCount} ${selectedSegment} users?`)) return;
+  showToast(DEMO_MODE ? `✅ Demo: Would send to ${segCount} users` : `📢 Sending to ${segCount} users…`);
+  document.getElementById('bc-subject').value = '';
+  document.getElementById('bc-body').value = '';
+}
+
+function previewBroadcast() {
+  const subject = document.getElementById('bc-subject').value;
+  const body = document.getElementById('bc-body').value;
+  openModal('Email Preview: ' + (subject || '(no subject)'),
+    `<div style="background:var(--surface2);border-radius:8px;padding:20px;font-size:14px;line-height:1.7;white-space:pre-wrap">${body || '(empty)'}</div>`,
+    [{ label:'Close', cls:'btn-ghost', action:'closeModal()' }]
+  );
+}
+
+// ─── BADGES ───────────────────────────────────────────────────────────────────
+function updateBadges() {
+  const unreadEmails = allEmails.filter(e=>e.status==='unread').length;
+  const openBugs = allBugs.filter(b=>b.status==='new').length;
+  const ib = document.getElementById('inbox-badge');
+  const bb = document.getElementById('bugs-badge');
+  ib.textContent = unreadEmails;
+  ib.style.display = unreadEmails ? '' : 'none';
+  bb.textContent = openBugs;
+  bb.style.display = openBugs ? '' : 'none';
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal(title, body, actions) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-actions').innerHTML = actions.map(a =>
+    `<button class="btn ${a.cls}" onclick="${a.action}">${a.label}</button>`
+  ).join('');
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
+document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  let t = document.getElementById('global-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'global-toast';
+    t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:var(--surface2);border:1px solid var(--border2);color:var(--text-primary);padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);z-index:2000;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  toastTimer = setTimeout(() => { t.style.opacity = '0'; }, 3500);
+}
+
+// ─── EMAIL USER ───────────────────────────────────────────────────────────────
+function emailUser(email) {
+  openModal('Email ' + email, `
+    <div class="form-group"><label class="form-label">Subject</label><input type="text" id="eu-sub" /></div>
+    <div class="form-group"><label class="form-label">Message</label><textarea id="eu-body" rows="6"></textarea></div>
+  `, [
+    { label:'Cancel', cls:'btn-ghost', action:'closeModal()' },
+    { label:'Send', cls:'btn-primary', action:`doEmailUser('${email}')` },
+  ]);
+}
+function doEmailUser(email) {
+  const sub = document.getElementById('eu-sub').value;
+  const body = document.getElementById('eu-body').value;
+  if (!sub || !body) { alert('Fill in subject and message'); return; }
+  closeModal();
+  showToast(DEMO_MODE ? `✅ Demo: Would email ${email}` : `📤 Sending to ${email}…`);
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function timeAgo(d) {
+  if (!d) return '—';
+  const diff = Date.now() - new Date(d).getTime();
+  const m = Math.floor(diff/60000), h = Math.floor(m/60), days = Math.floor(h/24);
+  if (days > 0) return days + 'd ago';
+  if (h > 0) return h + 'h ago';
+  if (m > 0) return m + 'm ago';
+  return 'just now';
+}
+
+function statusBadge(s) {
+  const map = { trial:'badge-amber', paid:'badge-green', churned:'badge-red', founding:'badge-purple', active:'badge-teal' };
+  const cls = map[s] || 'badge-muted';
+  const label = { trial:'Trial', paid:'Paid', churned:'Churned', founding:'Founding', active:'Active' }[s] || s;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function bugStatusBadge(s) {
+  const map = { new:'badge-red', in_progress:'badge-amber', fixed:'badge-green', notified:'badge-teal' };
+  const label = { new:'New', in_progress:'In Progress', fixed:'Fixed', notified:'Notified' }[s] || s;
+  return `<span class="badge ${map[s]||'badge-muted'}">${label}</span>`;
+}
+
+function catBadge(c) {
+  const map = { bug:'badge-red', feature_request:'badge-purple', general:'badge-muted', praise:'badge-green' };
+  const label = { bug:'Bug', feature_request:'Feature Request', general:'General', praise:'Praise' }[c] || c;
+  return `<span class="badge ${map[c]||'badge-muted'}">${label}</span>`;
+}
+
+</script>
+
+<!-- ══════════════════════════════════════
+  SENTRY BUGS PAGE — reads the raw `sentry_events` table via the
+  supabase-js client (sbClient). Kept separate from the existing
+  Bug Tracker page/data (allBugs, loadBugs, filterBugs) above.
+══════════════════════════════════════ -->
+<script>
+let allSentryBugs = [];
+
+async function loadSentryBugs() {
+  const { data, error } = await sbClient
+    .from('sentry_events')
+    .select('*')
+    .order('received_at', { ascending: false });
+
+  if (error) {
+    document.getElementById('sentry-bugs-tbody').innerHTML =
+      `<tr><td colspan="6" style="text-align:center;color:var(--pk-red);padding:30px">
+         ⚠️ Could not load bugs: ${error.message}
+       </td></tr>`;
+    return;
+  }
+
+  allSentryBugs = (data || []).map(row => ({
+    ...row,
+    dashStatus: row.status === 'resolved'  ? 'fixed'
+               : row.status === 'ignored'   ? 'notified'
+               : row.action === 'assigned'  ? 'in_progress'
+               : 'new'
+  }));
+
+  refreshSentryBugUI();
+}
+
+function refreshSentryBugUI() {
+  const filter = document.getElementById('sentry-bug-status-filter').value;
+  const visible = filter === 'all' ? allSentryBugs : allSentryBugs.filter(b => b.dashStatus === filter);
+
+  document.getElementById('sb-new').textContent      = allSentryBugs.filter(b => b.dashStatus === 'new').length;
+  document.getElementById('sb-progress').textContent = allSentryBugs.filter(b => b.dashStatus === 'in_progress').length;
+  document.getElementById('sb-fixed').textContent    = allSentryBugs.filter(b => b.dashStatus === 'fixed').length;
+  document.getElementById('sb-notified').textContent = allSentryBugs.filter(b => b.dashStatus === 'notified').length;
+
+  const tbody = document.getElementById('sentry-bugs-tbody');
+  if (visible.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">No bugs found for this filter.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = visible.map(bug => {
+    const levelColour = {fatal:'var(--pk-red)',error:'var(--pk-red)',warning:'var(--pk-amber)',info:'var(--pk-teal)'}[bug.level] || 'var(--text-muted)';
+    const statusLabel = {new:'🆕 New',in_progress:'🔧 In Progress',fixed:'✅ Fixed',notified:'📣 Notified'}[bug.dashStatus] || bug.dashStatus;
+    const when = bug.first_seen ? new Date(bug.first_seen).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    const explanation = plainEnglishSentry(bug);
+    const sentryLink = bug.permalink ? `<a href="${bug.permalink}" target="_blank" style="font-size:12px;color:var(--pk-teal);text-decoration:none">🔗 View in Sentry</a>` : '';
+    return `<tr>
+      <td><div style="font-weight:600;font-size:14px">${escHtmlSentry(bug.title||'—')}</div><div style="font-size:12px;color:var(--text-muted);margin-top:3px">${explanation}</div></td>
+      <td><span style="color:${levelColour};font-weight:600;font-size:12px;background:${levelColour}22;padding:2px 8px;border-radius:99px">${(bug.level||'?').toUpperCase()}</span><br><span style="font-size:11px;color:var(--text-muted)">${statusLabel}</span></td>
+      <td style="text-align:center"><span style="font-weight:600">${bug.times_seen??0}</span><div style="font-size:11px;color:var(--text-muted)">events</div></td>
+      <td style="font-size:13px">${when}</td>
+      <td>${sentryLink}</td>
+      <td><button class="sentry-claude-btn" onclick="sendSentryBugToClaudeCode('${bug.id}', event)">📋 Send to Claude Code</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function sendSentryBugToClaudeCode(id, event) {
+  event.stopPropagation();
+  const bug = allSentryBugs.find(b => String(b.id) === String(id));
+  if (!bug) return;
+
+  const reported = bug.received_at ? new Date(bug.received_at).toLocaleString('en-GB') : '—';
+
+  const prompt = `=== PETKIRA CRASH REPORT ===
+Title: ${bug.title || '—'}
+Severity: ${bug.level || '—'}
+Status: ${bug.status || '—'}
+Platform: ${bug.platform || '—'}
+Reported: ${reported}
+Sentry Link: ${bug.permalink || '—'}
+
+TASK: Analyze this crash in the PetKira Expo React Native codebase and suggest the fix. The codebase uses Expo EAS, React Native, and Supabase. Focus on the most likely cause and show me which file to edit and what to change.
+`;
+
+  openModal('Send to Claude Code — Crash Report', `<textarea id="claude-prompt-textarea" rows="10" style="width:100%;font-size:12px;font-family:monospace;background:var(--bg);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:12px;resize:vertical">${prompt}</textarea>`, [
+    { label:'📋 Copy to Clipboard', cls:'btn-primary', action:'copyClaudePrompt(this)' },
+    { label:'Close', cls:'btn-ghost', action:'closeModal()' }
+  ]);
+}
+
+function filterSentryBugs() { refreshSentryBugUI(); }
+
+function plainEnglishSentry(bug) {
+  const t = (bug.title||'').toLowerCase();
+  const c = (bug.culprit||'').toLowerCase();
+  if (t.includes('watchdog')||t.includes('watchdogtermination')) return 'App used too much memory and the OS shut it down forcefully.';
+  if (t.includes('anr')||t.includes('hang')) return 'App froze and stopped responding for over 2 seconds.';
+  if (t.includes('revenuecat')||t.includes('customerinfo')||t.includes('identity')) return 'In-app purchase system could not confirm the user\'s account.';
+  if (t.includes('feedback')||t.includes('url')||c.includes('dashboardscreen')) return 'Feedback button URL is broken — tapping it goes nowhere.';
+  if (t.includes('null')||t.includes('npe')) return 'App tried to use data that didn\'t exist yet (nil/null crash).';
+  if (t.includes('network')||t.includes('timeout')) return 'A network request timed out or lost connection mid-way.';
+  return bug.culprit ? `Crash in ${bug.culprit}.` : 'Unexpected error — tap "View in Sentry" for full details.';
+}
+
+function escHtmlSentry(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+(function watchSentryBugPage() {
+  const section = document.getElementById('page-sentrybugs');
+  if (!section) return;
+  const obs = new MutationObserver(() => {
+    if (section.classList.contains('active')||section.style.display==='block'||!section.hidden) {
+      loadSentryBugs();
+      obs.disconnect();
+    }
+  });
+  obs.observe(section, {attributes:true, attributeFilter:['class','style','hidden']});
+})();
+</script>
+</body>
+</html>
