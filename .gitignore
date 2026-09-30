@@ -1,11 +1,26 @@
-# Environment variables and secrets — never commit these
+# Secrets — never commit
 .env
 .env.*
 !.env.example
+.env.local
+.env*.local
+config.local.js
 *.pem
 *.key
-*.p12
-*.pfx
 credentials.json
 service-account*.json
 secrets.json
+
+# Next.js
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+out/
+
+# Temp / agent scratch
+_claude_*.txt
+_fix_utf8_*
+*.log
+.DS_Store
+Thumbs.db
