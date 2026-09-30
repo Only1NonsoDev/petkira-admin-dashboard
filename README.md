@@ -1,5 +1,17 @@
 # PetKira Admin Dashboard (portfolio demo)
 
+## Live demo
+
+Open the deployed demo in a browser:
+
+**[https://petkira-admin-dashboard.vercel.app](https://petkira-admin-dashboard.vercel.app)**
+
+Alias: [https://petkira-admin-dashboard-only1nonsodev.vercel.app](https://petkira-admin-dashboard-only1nonsodev.vercel.app)
+
+This is a **portfolio DEMO** with invented sample data and a **DEMO** badge. It uses no real PetKira API keys and no production data. On the login screen, click **Enter demo console**.
+
+Local run still works: copy `.env.example` to `.env.local` and keep `NEXT_PUBLIC_DEMO_MODE=true`. See [Run the demo](#run-the-demo) below.
+
 **This is a portfolio demonstration, NOT the production admin.** Every user, email, bug, crash and metric shown in demo mode is invented sample data. No real customer data is included.
 
 A Next.js admin console with a glass UI covering app health, user analytics, subscribers, beta feedback, a support inbox with AI reply drafts, bug tracking, Sentry crash reports, email broadcast and admin management.
@@ -31,4 +43,4 @@ npm run lint   # tsc --noEmit
 
 ## Security note
 
-Never put real Supabase, OpenAI or Resend keys in a public fork or commit them. `.env.local` is gitignored; keep it that way.
+Never commit `.env.local` or real keys. Do not put real Supabase, OpenAI, Resend, or PetKira API keys in a public fork. `.env.local` is gitignored; keep it that way.
